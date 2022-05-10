@@ -1,5 +1,5 @@
 const configs = {
-    api_url : "http://localhost:5000"
+    api_url : "https://kitchen-recipe-backend1.herokuapp.com"
 }
 
 export default configs
