@@ -1,8 +1,8 @@
-# TO DO APPLICATION
+# KITCHEN RECIPE MANAGEMENT
 
-This application allows user to create and manage tickets. The user can move the tickets between open and resolved state, assign a new user and change priority. The admin user has the previlage to approve or delete new user requests.
+This application allows user to create and manage kitchen recipes. The user can add, edit and delete the recipes and can upvote or downvote the recipes.
 
-This repository contains the backend source code of the application.
+This repository contains the frontend source code of the application.
 
 # TECH STACK
 
@@ -15,8 +15,8 @@ This repository contains the backend source code of the application.
 
 The backend code can be found in the repository
 
-[https://github.com/GouthamKannan/ticket_management_backend](https://github.com/GouthamKannan/ticket_management_backend)
+[https://github.com/GouthamKannan/kitchen-recipe-backend](https://github.com/GouthamKannan/kitchen-recipe-backend)
 
 # DEMO
 
-The application is hosted in [https://ticket-management-test.netlify.app](https://ticket-management-test.netlify.app)
+The application is hosted in [https://kitchen-recipe.netlify.app/](https://kitchen-recipe.netlify.app/)
