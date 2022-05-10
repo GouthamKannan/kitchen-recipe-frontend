@@ -23,5 +23,5 @@ The application is hosted in [https://kitchen-recipe.netlify.app/](https://kitch
 
 # DEMO CREDENTIALS
 
-email - guest@guest.com
+email - guest@guest.com <br>
 password - guest
