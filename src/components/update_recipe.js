@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import configs from "../config";
 import Cookies from 'js-cookie';
 
-// Sign Up component
+// Update Recipe component
 class UpdateRecipe extends Component {
     constructor(props) {
         super(props)
@@ -12,6 +12,8 @@ class UpdateRecipe extends Component {
                 max_ingredient_count = parseInt(ingredient._id)
             }
         }
+
+        // Initialize state variables
         this.state = {
             user_name : this.props.user_name,
             _id : this.props.data._id,
@@ -23,9 +25,6 @@ class UpdateRecipe extends Component {
             ingredients: this.props.data.ingredients,
             ingredient_count : max_ingredient_count
         }
-        console.log(this.props)
-        console.log(this.props.data.instruction)
-        console.log(this.props.data.ingredients)
         this.update_recipe = this.update_recipe.bind(this)
     }
 
@@ -34,6 +33,7 @@ class UpdateRecipe extends Component {
         this.setState({ ...this.state, [name]: value });
     };
 
+    // Handle food type input
     handleFoodType = ({ target: { name, value } }) => {
         if(value === "veg")
             this.setState({ "is_veg" : true });
@@ -41,6 +41,7 @@ class UpdateRecipe extends Component {
             this.setState({ "is_veg" : false });
     };
 
+    // Conver the file contents to base64
     convertToBase64 = async(file) => {
         return new Promise((resolve, reject) => {
           const fileReader = new FileReader();
@@ -54,17 +55,15 @@ class UpdateRecipe extends Component {
     });
     }
 
+    // Handle file upload input
     handleFileUpload = async(e) => {
-        console.log("Here")
-        console.log(e.target.files)
         var files = e.target.files
-        console.log(files[0])
         const file = files[0]
         const base64 = await this.convertToBase64(file)
         this.setState({image : base64})
-        console.log(base64)
     }
 
+    // Handle change ingredient from input
     handleChangeIngredient = (_id, name, value) => {
         var cur_ingredients = this.state.ingredients.map(ingredient =>
             ingredient._id === _id ?
@@ -77,10 +76,9 @@ class UpdateRecipe extends Component {
         this.setState({
             ingredients : cur_ingredients
         })
-
-
     }
 
+    // Add new ingredient field to form
     add_ingredient = () => {
         var cur_ingredients = this.state.ingredients;
         var ingredient_count = this.state.ingredient_count
@@ -96,6 +94,7 @@ class UpdateRecipe extends Component {
         })
     }
 
+    // Delete the ingredient filed in the input
     delete_ingredient = (_id) => {
         var cur_ingredients = this.state.ingredients.filter(ingredient => ingredient._id !== _id)
         this.setState({
@@ -103,6 +102,7 @@ class UpdateRecipe extends Component {
         })
     }
 
+    // Get the ingredients from the state and create tags
     get_ingredients = () => {
         var ingredient_comp = []
         ingredient_comp.push(<div className="my-2" />)
@@ -130,11 +130,11 @@ class UpdateRecipe extends Component {
         return ingredient_comp
     }
 
-    // Handle register user button click
+    // Handle update recipe button click
     update_recipe = async(e) => {
         e.preventDefault();
 
-        // Call signup API to register user
+        // Call Update recipe API to update recipe information
         const response = await fetch(configs.api_url + "/recipe/update_recipe", {
             method: "PUT",
             credentials: "include",
@@ -152,28 +152,29 @@ class UpdateRecipe extends Component {
 
         const data = await response.json();
 
-        // If signup is successful
+        // If update is successful
         if (data.success === true) {
             alert("Recipe updated successfully")
             window.location = "/my-recipes/" + this.state.user_name;
         }
 
-        // If signup failed
+        // If update failed
         else
             alert("Cannot update recipe")
     }
 
+    // Redirect when close button is clicked
     close = (e) => {
         e.preventDefault();
         window.location = "/my-recipes/" + this.state.user_name;
     }
 
+    // Create image from base64 data
     get_image = () => {
         if(this.state.image.length > 0)
         {
             var binary_data = this.state.image;
             return <img width="100" height="100" src={`${binary_data}`} />
-
         }
         else
         {
@@ -182,6 +183,7 @@ class UpdateRecipe extends Component {
     }
 
 
+    // Render the update recipe component
     render() {
         if(Cookies.get("session_id")) {
             return (
@@ -219,7 +221,7 @@ class UpdateRecipe extends Component {
                                 <>
                                 <input className = "my-1" type="radio" value="veg" defaultChecked name="is_veg"/> Veg <br />
                                 <input className = "my-1" type="radio" value="non_veg" name="is_veg"/> Non-veg
-                                </> 
+                                </>
                                 }
                                 {(!this.state.is_veg) &&
                                 <>
@@ -248,6 +250,8 @@ class UpdateRecipe extends Component {
                 </div>
             );
         }
+
+        // Redirect when not logged in
         else {
             window.location = "/";
         }

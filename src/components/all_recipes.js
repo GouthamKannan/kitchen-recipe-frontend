@@ -1,8 +1,6 @@
 import { React, Component } from "react";
-import Cookies from 'js-cookie';
-import configs from "../config";
-import Header from "./header";
 
+// AllRecipes Component
 class AllRecipes extends Component {
     constructor(props) {
         super(props)
@@ -15,7 +13,10 @@ class AllRecipes extends Component {
         }
     }
 
+    // Handle upvote button click
     upvote = async(id) => {
+
+        // Remove if already upvoted
         if(this.state.upvoted) {
             var removed = await this.props.RemoveUpvote(id)
             if(removed)
@@ -26,6 +27,8 @@ class AllRecipes extends Component {
                 })
             }
         }
+
+        // Add upvote and remove downvote if found
         else
         {
             var upvoted = await this.props.OnUpvote(id)
@@ -41,12 +44,12 @@ class AllRecipes extends Component {
                 })
             }
         }
-
-        console.log(this.state)
-
     }
 
+    // Handle downvote button click
     downvote = async(id) => {
+
+        // When already downvoted
         if(this.state.downvoted) {
             var removed = await this.props.RemoveDownvote(id)
             if(removed)
@@ -57,6 +60,8 @@ class AllRecipes extends Component {
                 })
             }
         }
+
+        // Add downvote and remove upvote if found
         else
         {
             var downvoted = await this.props.OnDownvote(id)
@@ -74,6 +79,7 @@ class AllRecipes extends Component {
         }
     }
 
+    // Create tag for each ingredient
     get_ingredients = () => {
         var ing_tags = []
         console.log(this.props.recipe.ingredients)
@@ -88,19 +94,21 @@ class AllRecipes extends Component {
         return ing_tags
     }
 
+    // Create tags for recipe
     get_recipe = () => {
 
         return(
             <section>
                 <div className="card my-3 bg-light" style={{"width":"80%", "margin-left":"10%", "margin-right":"10%"}}>
                     <div className="card-body" style={{"display" : "block", "align-content" : "left"}}>
-                        {/* <!-- Data --> */}
                         <div className="d-flex mb-3">
                             <i class="fa fa-user mx-2 my-1"></i>
                             <div className="text-dark mb-0">
                                 <strong>{this.props.recipe.user_name}</strong>
                             </div>
                         </div>
+
+                        {/* Recipe details */}
                         <div>
                             <h2><u>{this.props.recipe.recipe_name}</u></h2>
                             {(this.props.recipe.is_veg) &&
@@ -114,7 +122,6 @@ class AllRecipes extends Component {
                                 </div>
                             }
                         </div>
-                        {/* <!-- Description --> */}
                         <div>
                             <h5>Description</h5>
                             <p>{this.props.recipe.description}</p>
@@ -131,7 +138,8 @@ class AllRecipes extends Component {
                         </div>
                         <hr />
                     </div>
-                    {/* <!-- Media --> */}
+
+                    {/* Recipe Image */}
                     {(this.props.recipe.image.length > 0) &&
                         <div className="mx-3">
                         <h5>Recipe Image</h5>
@@ -140,14 +148,9 @@ class AllRecipes extends Component {
                         </div>
                         </div>
                     }
-                    {/* <a href="#!">
-                        <div className="mask" style={{"background-color": "rgba(251, 251, 251, 0.2)"}}></div>
-                    </a>
-                    </div> */}
-                    {/* <!-- Media --> */}
-                    {/* <!-- Interactions --> */}
+
+                    {/* Upvote and downvote buttons */}
                     <div className="card-body">
-                    {/* <!-- Reactions --> */}
                         <div class="d-flex justify-content-between text-center border-top border-bottom mb-4 py-2">
                             <div>
                                 <a  style={{"cursor" : "pointer"}} onClick={() => this.upvote(this.props.recipe._id)}>
@@ -177,7 +180,6 @@ class AllRecipes extends Component {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </section>
         )

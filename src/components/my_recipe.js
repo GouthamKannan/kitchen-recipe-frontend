@@ -5,26 +5,22 @@ import Header from "./header";
 import Recipes from "./recipes";
 import UpdateRecipe from "./update_recipe";
 
-/**
- * Component for HomePage application
- */
+// MyRecipe component
 class MyRecipe extends Component {
 
-    /**
-     * Intialize the task list of the component
-     */
     constructor(props) {
-    super(props);
-    this.state = {
-        user_name : "",
-        all_recipes : [],
-        show_recipes : [],
-        show_data : true,
-        update_data : {},
-        search_text : ""
-    };
-    }
+        super(props);
 
+        // Initialize state variables
+        this.state = {
+            user_name : "",
+            all_recipes : [],
+            show_recipes : [],
+            show_data : true,
+            update_data : {},
+            search_text : ""
+        };
+    }
 
     componentDidMount = async() => {
 
@@ -38,15 +34,15 @@ class MyRecipe extends Component {
             window.location = "/"
         }
 
-        console.log(user_name)
-        // Get the tasks of the user from API
+        // Get the recipes of current user from API
         var response = await fetch(configs.api_url + "/recipe/get_recipe/" + user_name, {
             method: "GET",
             credentials: "include",
             headers: { "Content-Type": "application/json" }
         })
         var data = await response.json()
-        console.log(data)
+
+        // Update the state variable
         if (data.data.length > 0) {
             this.setState({
                 show_data : true,
@@ -56,13 +52,17 @@ class MyRecipe extends Component {
         }
     }
 
+    // When search button is clicked
     search = () =>{
-        console.log(this.state.search_text)
+
+        // Empty search string
         if(this.state.search_text.length === 0) {
             this.setState({
                 show_recipes : this.state.all_recipes
             })
         }
+
+        // Filter based on search string
         else {
             this.setState({
                 show_recipes : this.state.all_recipes.filter((recipe) =>
@@ -74,6 +74,7 @@ class MyRecipe extends Component {
         }
     }
 
+    // Handle search input change and store in state
     handleChange = ({ target: { name, value } }) => {
         this.setState({ ...this.state, [name]: value });
         this.state.search_text = value;
@@ -81,6 +82,7 @@ class MyRecipe extends Component {
       };
 
 
+    // Show update form when update button is clicked
     update = async(id) => {
         this.setState({
             show_data : false,
@@ -89,6 +91,7 @@ class MyRecipe extends Component {
 
     }
 
+    // Delete the recipe using API
     delete = async(id) => {
         console.log(id)
         var response = await fetch(configs.api_url + "/recipe/delete_recipe/", {
@@ -98,12 +101,15 @@ class MyRecipe extends Component {
             body : JSON.stringify({_id : id})
         })
         var data = await response.json()
+
+        // Redirect
         if(data.success === true) {
             alert("Recipe deleted successfully")
             window.location = "/my-recipes/" + this.state.user_name
         }
     }
 
+    // Create component for each recipe
     get_recipes = () => {
 
         var recipes = []
@@ -117,6 +123,7 @@ class MyRecipe extends Component {
             )
         });
 
+        // When no recipe is found
         if(this.state.show_recipes.length===0)
         {
             return <center><br/><span>No recipes found</span></center>
@@ -128,7 +135,7 @@ class MyRecipe extends Component {
     }
 
 
-    // Render the input text field and list of tasks
+    // Render the component
     render() {
         console.log(this.state.user_name)
         if(Cookies.get("session_id")) {
@@ -136,20 +143,29 @@ class MyRecipe extends Component {
             <>
                 {(this.state.show_data===true) &&
                     <div style={{"overflow" : "hidden"}}>
+
+                    {/* Header component */}
                     <div>
                         <Header user_name={this.state.user_name}/>
                     </div>
+
                     <div className="text-center">
-                    <div className="my-3">
-                        <span><h1>MY RECIPES</h1></span>
+                        <div className="my-3">
+                            <span><h1>MY RECIPES</h1></span>
+                        </div>
+
+                        {/* Search input */}
+                        <input  className="my-3" type = "text" name="search_text" value={this.state.search_text} onChange={evt => this.handleChange(evt)} placeholder="Enter text to search"></input>
+                        <button onClick={this.search}>search</button>
                     </div>
-                    <input  className="my-3" type = "text" name="search_text" value={this.state.search_text} onChange={evt => this.handleChange(evt)} placeholder="Enter text to search"></input>
-                    <button onClick={this.search}>search</button>
-                    </div>
+
+                    {/* Recipes */}
                     <div style={{"margin-top":"5%", "margin-bottom":"5%"}}>
-                    {this.get_recipes()}
+                        {this.get_recipes()}
                     </div>
                 </div>}
+
+                {/* Update from */}
                 {
                     (this.state.show_data===false) &&
                     <UpdateRecipe
@@ -160,6 +176,8 @@ class MyRecipe extends Component {
             </>
             );
         }
+
+        // Redirect when not logged in
         else {
             window.location = "/";
         }

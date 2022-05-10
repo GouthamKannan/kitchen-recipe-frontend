@@ -3,10 +3,12 @@ import configs from "../config";
 import Header from "./header";
 import Cookies from 'js-cookie';
 
-// Sign Up component
+// Add Recipe component
 class AddRecipe extends Component {
     constructor(props) {
         super(props)
+
+        // Initialize state variable
         this.state = {
             user_name: '',
             recipe_name: '',
@@ -22,6 +24,7 @@ class AddRecipe extends Component {
 
     componentDidMount() {
 
+        // Get username from URL
         const windowUrl = window.location;
         var user_name = windowUrl.toString().split('/').pop().replace("?", "").replace("#", "")
         if(user_name === Cookies.get("user_name"))
@@ -32,11 +35,13 @@ class AddRecipe extends Component {
         }
 
     }
+
     // Handle change in input and store in state
     handleChange = ({ target: { name, value } }) => {
         this.setState({ ...this.state, [name]: value });
     };
 
+    // Handle food type input change and store in state
     handleFoodType = ({ target: { name, value } }) => {
         if(value === "veg")
             this.setState({ "is_veg" : true });
@@ -44,6 +49,7 @@ class AddRecipe extends Component {
             this.setState({ "is_veg" : false });
     };
 
+    // Conver the file contents to base64
     convertToBase64 = async(file) => {
         return new Promise((resolve, reject) => {
           const fileReader = new FileReader();
@@ -57,17 +63,15 @@ class AddRecipe extends Component {
     });
     }
 
+    // Handle file upload input
     handleFileUpload = async(e) => {
-        console.log("Here")
-        console.log(e.target.files)
         var files = e.target.files
-        console.log(files[0])
         const file = files[0]
         const base64 = await this.convertToBase64(file)
         this.setState({image : base64})
-        console.log(base64)
     }
 
+    // Handle change ingredient input
     handleChangeIngredient = (_id, name, value) => {
         var cur_ingredients = this.state.ingredients.map(ingredient =>
             ingredient._id === _id ?
@@ -80,10 +84,9 @@ class AddRecipe extends Component {
         this.setState({
             ingredients : cur_ingredients
         })
-
-
     }
 
+    // Add new ingredient field to the input
     add_ingredient = (e) => {
         e.preventDefault();
         var cur_ingredients = this.state.ingredients;
@@ -100,6 +103,7 @@ class AddRecipe extends Component {
         })
     }
 
+    // Delete ingredient filed from input
     delete_ingredient = (_id) => {
         var cur_ingredients = this.state.ingredients.filter(ingredient => ingredient._id !== _id)
         this.setState({
@@ -107,6 +111,7 @@ class AddRecipe extends Component {
         })
     }
 
+    // Create tag for each ingredient
     get_ingredients = () => {
         var ingredient_comp = []
         ingredient_comp.push(<div className="my-2" />)
@@ -133,11 +138,11 @@ class AddRecipe extends Component {
         return ingredient_comp
     }
 
-    // Handle register user button click
+    // Handle add recipe button click
     add_recipe = async(e) => {
         e.preventDefault();
 
-        // Call signup API to register user
+        // Call add recipe API to add recipe to database
         const response = await fetch(configs.api_url + "/recipe/add_recipe", {
             method: "POST",
             credentials: "include",
@@ -155,17 +160,18 @@ class AddRecipe extends Component {
 
         const data = await response.json();
 
-        // If signup is successful
+        // If add recipe is successful
         if (data.success === true) {
             alert("Recipe added successfully")
             window.location = "/my-recipes/" + this.state.user_name;
         }
 
-        // If signup failed
+        // If add recipe failed
         else
             alert(data.data)
     }
 
+    // Get the image from base64 data
     get_image = () => {
         if(this.state.image.length > 0)
         {
@@ -179,18 +185,19 @@ class AddRecipe extends Component {
         }
     }
 
+    // Render add recipe component
     render() {
         if(Cookies.get("session_id")) {
             return (
-
                 <>
+                {/* Header component */}
                 <div>
-                    <Header
-                        user_name={this.state.user_name}
-                    />
+                    <Header user_name={this.state.user_name} />
                 </div>
                 <div style={{"overflow" : "hidden"}}>
                 {this.state.show_icon && (<center><i className="fa fa-spinner fa-pulse fa-2x mt-5 center"></i></center>)}
+
+                {/* Input fields */}
                 <div className = "auth-wrapper" style= {{"margin-top": "1%", "margin-bottom":"3%"}}>
                     <div className = "auth-inner" style= {{"width" : "70%"}}>
                         <form onSubmit = { this.add_recipe } >
@@ -234,8 +241,6 @@ class AddRecipe extends Component {
                             <div className="text-center">
                             <button type = "submit" className = "btn btn-primary btn-block w-25 my-2" > Add </button>
                             </div>
-
-
                         </form >
                     </div>
                 </div >
@@ -243,6 +248,8 @@ class AddRecipe extends Component {
                 </>
             );
         }
+
+        // Redirect when not logged in
         else {
             window.location = "/";
         }

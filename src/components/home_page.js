@@ -4,16 +4,13 @@ import configs from "../config";
 import Header from "./header";
 import AllRecipes from "./all_recipes";
 
-/**
- * Component for HomePage application
- */
+// Home page component
 class HomePage extends Component {
 
-    /**
-     * Intialize the task list of the component
-     */
     constructor(props) {
     super(props);
+
+    // Initialize state variables
     this.state = {
         user_name : "",
         all_recipes : [],
@@ -22,6 +19,7 @@ class HomePage extends Component {
     };
     }
 
+    // Handle search input changes
     handleChange = ({ target: { name, value } }) => {
         this.setState({ ...this.state, [name]: value });
         this.state.search_text = value;
@@ -40,7 +38,7 @@ class HomePage extends Component {
             window.location = "/"
         }
 
-        // Get the tasks of the user from API
+        // Get all recipes from API
         var response = await fetch(configs.api_url + "/recipe/get_recipes", {
             method: "GET",
             credentials: "include",
@@ -53,12 +51,17 @@ class HomePage extends Component {
         })
     }
 
+    // When search button is clicked
     search = () => {
+
+        // Search text is empty
         if(this.state.search_text.length === 0) {
             this.setState({
                 show_recipes : this.state.all_recipes
             })
         }
+
+        // Filter the recipes based on search text
         else {
             this.setState({
                 show_recipes : this.state.all_recipes.filter((recipe) =>
@@ -70,6 +73,7 @@ class HomePage extends Component {
         }
     }
 
+    // Upvote the recipe and store in db using API
     upvote = async(_id) => {
         var response = await fetch(configs.api_url + "/recipe/inc_upvote_recipe", {
             method: "PUT",
@@ -82,7 +86,6 @@ class HomePage extends Component {
         })
         var data = await response.json()
         if (data.success === true) {
-            // Update the upvote symbol
             return true
         }
         else{
@@ -90,6 +93,7 @@ class HomePage extends Component {
         }
     }
 
+    // Remove upvote from the recipe and store in db using API
     remove_upvote = async(_id) => {
         var response = await fetch(configs.api_url + "/recipe/dec_upvote_recipe", {
             method: "PUT",
@@ -102,7 +106,6 @@ class HomePage extends Component {
         })
         var data = await response.json()
         if (data.success === true) {
-            // Update the upvote symbol
             return true
         }
         else{
@@ -110,6 +113,7 @@ class HomePage extends Component {
         }
     }
 
+    // Downvote the recipe and store in db using API
     downvote = async(_id) => {
         var response = await fetch(configs.api_url + "/recipe/inc_downvote_recipe", {
             method: "PUT",
@@ -130,6 +134,7 @@ class HomePage extends Component {
         }
     }
 
+    // Remove downvote from the recipe and store in db using API
     remove_downvote = async(_id) => {
         var response = await fetch(configs.api_url + "/recipe/dec_downvote_recipe", {
             method: "PUT",
@@ -150,6 +155,7 @@ class HomePage extends Component {
         }
     }
 
+    // Create component for each recipe
     get_recipes = () => {
         var recipes_data = []
         this.state.show_recipes.forEach(recipe => {
@@ -165,6 +171,7 @@ class HomePage extends Component {
             )
         });
 
+        // When no recipe is found
         if(this.state.show_recipes.length===0)
         {
             return <center><br/><span>No recipes found</span></center>
@@ -176,29 +183,32 @@ class HomePage extends Component {
     }
 
 
-    // Render the input text field and list of tasks
+    // Render the component
     render() {
-        console.log(Cookies.get("session_id"))
-        // alert("here")
         if(Cookies.get("session_id").length > 0) {
             console.log(this.state.show_recipes)
             return (
             <>
+                {/* Header component */}
                 <div>
-                    <Header
-                        user_name={this.state.user_name}
-                    />
+                    <Header user_name={this.state.user_name} />
                 </div>
+
+                {/* Search input */}
                 <div className="text-center">
                     <input  className="my-3" type = "text" name="search_text" value={this.state.search_text} onChange={evt => this.handleChange(evt)} placeholder="Enter text to search"></input>
                     <button onClick={this.search}>search</button>
                 </div>
+
+                {/* Recipes */}
                 <div style={{"margin-top":"5%", "margin-bottom":"5%"}}>
                     {this.get_recipes()}
                 </div>
             </>
             );
         }
+
+        // Redirect when not logged in
         else {
             window.location = "/";
         }
