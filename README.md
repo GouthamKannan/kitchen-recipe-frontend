@@ -6,10 +6,10 @@ This repository contains the frontend source code of the application.
 
 # TECH STACK
 
-*HTML
-*CSS
-*Bootstrap
-*ReactJS
+* HTML
+* CSS
+* Bootstrap
+* ReactJS
 
 # BACKEND SOURCE CODE
 
